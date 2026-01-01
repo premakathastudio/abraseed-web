@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from 'next/link';
 
 export default function Dashboard() {
   // 1. State untuk menyimpan data dari sensor
@@ -66,6 +67,17 @@ export default function Dashboard() {
           <p>Date: {time.toLocaleDateString('id-ID')}</p>
           <p>Time: {time.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</p>
         </div>
+      </div>
+
+      {/* Letakkan ini di bawah Header atau di atas Grafik */}
+      <div className="flex justify-end mb-4">
+        <Link 
+          href="/history" 
+          className="bg-white text-green-700 border-2 border-green-600 hover:bg-green-600 hover:text-white px-6 py-2 rounded-xl font-bold transition-all duration-300 shadow-md flex items-center gap-2 group"
+        >
+         <span>📊 Lihat Riwayat Data</span>
+         <span className="group-hover:translate-x-1 transition-transform">→</span>
+        </Link>
       </div>
 
       {/* Judul Utama */}
