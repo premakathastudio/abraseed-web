@@ -1,11 +1,26 @@
 'use client';
 
+import { useState, useRef } from 'react';
+import { Volume2, VolumeX, LayoutDashboard, Map, Info, Users, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Map, Info, Users, ArrowLeft } from 'lucide-react';
 
 export default function V2Layout({ children }: { children: React.ReactNode }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const pathname = usePathname();
+
+  const toggleMusic = () => {
+    if (audioRef.current) {
+      if (!isPlaying) {
+        audioRef.current.play();
+        audioRef.current.muted = false;
+      } else {
+        audioRef.current.pause();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
 
   const menuItems = [
     { name: 'Monitoring', path: '/v2', icon: <LayoutDashboard size={20} /> },
@@ -16,52 +31,68 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-[#F0F7F2]">
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-[#1b4d2c] text-white flex flex-col shadow-2xl fixed h-full">
-        <div className="p-8">
-          <h1 className="text-2xl font-black tracking-tighter">
-            ABRA<span className="text-green-400">SEED</span>
-            <span className="block text-[10px] tracking-[0.2em] text-green-200 opacity-60 uppercase font-light">Version 2.0</span>
-          </h1>
-        </div>
-
-        <nav className="flex-1 px-4">
-          <div className="space-y-2">
-            {menuItems.map((item) => {
-              const isActive = pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
-                    isActive 
-                    ? 'bg-green-600 text-white shadow-lg' 
-                    : 'hover:bg-green-800/50 text-green-100'
-                  }`}
-                >
-                  <span className={`${isActive ? 'text-white' : 'text-green-400 group-hover:text-white'}`}>
-                    {item.icon}
-                  </span>
-                  <span className="font-bold text-sm tracking-wide">{item.name}</span>
-                </Link>
-              );
-            })}
+      {/* SIDEBAR FIXED */}
+      <aside className="fixed left-0 top-0 h-screen w-64 bg-[#1b4d2c] text-white p-8 flex flex-col justify-between z-50 shadow-2xl">
+        <div>
+          <div className="mb-12">
+            <h2 className="text-3xl font-black tracking-tighter italic">ABRA<span className="text-green-400">SEED</span></h2>
+            <p className="text-[10px] font-bold text-green-200/40 tracking-[0.4em] uppercase">Version 2.0</p>
           </div>
-        </nav>
 
-        <div className="p-6 mt-auto border-t border-green-800">
-          <Link href="/" className="flex items-center gap-2 text-xs font-bold text-green-300 hover:text-white transition-colors">
-            <ArrowLeft size={14} /> Back to v1.0
-          </Link>
+          <nav className="space-y-3">
+            {menuItems.map((item) => (
+              <Link 
+                key={item.path} 
+                href={item.path}
+                className={`flex items-center gap-4 px-4 py-3 rounded-2xl font-bold transition-all duration-300 ${
+                  pathname === item.path 
+                  ? 'bg-green-500 text-white shadow-lg shadow-green-900/40 translate-x-2' 
+                  : 'text-green-100/60 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                {item.icon}
+                <span className="text-sm">{item.name}</span>
+              </Link>
+            ))}
+          </nav>
         </div>
+
+        <Link href="/" className="flex items-center gap-3 text-green-100/40 hover:text-white transition-colors text-xs font-bold">
+          <ArrowLeft size={16} />
+          Back to v1.0
+        </Link>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1 ml-64 p-8 overflow-y-auto">
-        <div className="max-w-5xl mx-auto">
-          {children}
-        </div>
+      {/* CONTENT AREA */}
+      <main className="flex-1 ml-64 p-12 relative overflow-x-hidden">
+        {children}
       </main>
+
+      {/* MUSIC PLAYER */}
+      <audio ref={audioRef} loop>
+        <source src="/laguabra.mpeg" type="audio/mpeg" />
+      </audio>
+
+      <div className="fixed bottom-8 right-8 z-[100]">
+        <button 
+          onClick={toggleMusic}
+          className={`group flex items-center gap-3 p-3 pr-6 rounded-2xl backdrop-blur-xl border transition-all duration-500 shadow-2xl ${
+            isPlaying 
+            ? 'bg-[#1b4d2c] border-green-500/30 text-white' 
+            : 'bg-white/90 border-slate-200 text-slate-500'
+          }`}
+        >
+          <div className={`p-2 rounded-xl transition-all ${isPlaying ? 'bg-green-500 text-white scale-110' : 'bg-slate-100'}`}>
+            {isPlaying ? <Volume2 size={20} className="animate-pulse" /> : <VolumeX size={20} />}
+          </div>
+          <div className="flex flex-col items-start leading-tight">
+            <span className="text-[10px] font-black uppercase tracking-widest mb-0.5">
+              {isPlaying ? 'Now Playing' : 'Music Off'}
+            </span>
+            <span className="text-[9px] font-medium opacity-50 truncate w-24 text-left">Laguabra.mpeg</span>
+          </div>
+        </button>
+      </div>
     </div>
   );
 }
