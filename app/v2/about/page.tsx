@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 
 export default function AboutProject() {
-  // Default tab kita arahkan ke 'parts' sesuai diskusi sebelumnya
   const [activeTab, setActiveTab] = useState('parts');
 
   const tabs = [
@@ -54,7 +53,7 @@ export default function AboutProject() {
         
         {/* HEADER SECTION */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-black text-slate-800 mb-4 tracking-tight">About <span className="text-emerald-600">ABRASEED</span></h1>
+          <h1 className="text-4xl font-black text-slate-800 mb-4 tracking-tight uppercase">About <span className="text-emerald-600">ABRASEED</span></h1>
           <p className="text-slate-500 max-w-xl mx-auto text-sm leading-relaxed font-medium">
             Integrasi teknologi IoT dan Sistem Kendali Cerdas untuk optimasi pertanian hidroponik masa depan.
           </p>
@@ -116,15 +115,15 @@ export default function AboutProject() {
             </div>
           )}
 
-          {/* TAB: FUZZY LOGIC (THE SPECIAL SECTION) */}
+          {/* TAB: FUZZY LOGIC */}
           {activeTab === 'fuzzy' && (
             <div className="space-y-8 animate-in fade-in zoom-in duration-500">
-              <div className="bg-[#1b4d2c] p-10 rounded-[3rem] text-white overflow-hidden relative">
+              <div className="bg-[#1b4d2c] p-10 rounded-[3rem] text-white overflow-hidden relative shadow-xl shadow-green-900/10">
                 <div className="relative z-10">
                   <h3 className="text-2xl font-black mb-4 flex items-center gap-3">
                     <BrainCircuit className="text-emerald-400" /> Fuzzy Inference System
                   </h3>
-                  <p className="text-emerald-100/70 text-sm leading-relaxed max-w-2xl">
+                  <p className="text-emerald-100/70 text-sm leading-relaxed max-w-2xl font-medium">
                     Sistem menggunakan metode Mamdani untuk menghasilkan keputusan yang adaptif. Berbeda dengan sistem ON/OFF biasa, Fuzzy memungkinkan aktuator bekerja secara proporsional sesuai kebutuhan riil tanaman.
                   </p>
                 </div>
@@ -137,14 +136,8 @@ export default function AboutProject() {
                     <div className="p-3 bg-yellow-50 rounded-2xl text-yellow-600"><Sun size={20}/></div>
                     <h4 className="font-black text-slate-800 uppercase text-xs tracking-widest">Logic A: Lighting</h4>
                   </div>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase">
-                      <span>Input: Lux</span>
-                      <span>Output: LED strips</span>
-                    </div>
-                    <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 text-xs font-medium text-slate-600 leading-relaxed italic border-l-4 border-l-yellow-400">
-                      "Semakin rendah intensitas cahaya matahari yang terdeteksi, maka sistem akan menambah jumlah LED Strip yang aktif (1-6) secara otomatis."
-                    </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 text-xs font-medium text-slate-600 leading-relaxed italic border-l-4 border-l-yellow-400">
+                    "Semakin rendah intensitas cahaya matahari yang terdeteksi, maka sistem akan menambah jumlah LED Strip yang aktif (1-6) secara otomatis."
                   </div>
                 </div>
 
@@ -153,74 +146,47 @@ export default function AboutProject() {
                     <div className="p-3 bg-blue-50 rounded-2xl text-blue-600"><MoveUp size={20}/></div>
                     <h4 className="font-black text-slate-800 uppercase text-xs tracking-widest">Logic B: Elevation</h4>
                   </div>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase">
-                      <span>Input: Ultrasonic</span>
-                      <span>Output: Servo Angle</span>
-                    </div>
-                    <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 text-xs font-medium text-slate-600 leading-relaxed italic border-l-4 border-l-blue-400">
-                      "Jika jarak tanaman ke sensor mengecil (tanaman bertambah tinggi), servo akan berputar untuk menyesuaikan ketinggian lampu secara otomatis."
-                    </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 text-xs font-medium text-slate-600 leading-relaxed italic border-l-4 border-l-blue-400">
+                    "Jika jarak tanaman ke sensor mengecil (tanaman bertambah tinggi), servo akan berputar untuk menyesuaikan ketinggian lampu secara otomatis."
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* TAB: FLOWCHART */}
+          {/* TAB: FLOWCHART (GAMBAR DARI PUBLIC) */}
           {activeTab === 'flowchart' && (
-            <div className="space-y-12 animate-in fade-in zoom-in duration-500">
-              <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden">
+            <div className="space-y-8 animate-in fade-in zoom-in duration-500">
+              <div className="bg-slate-900 p-10 rounded-[3rem] text-white relative overflow-hidden shadow-2xl shadow-slate-200">
                 <div className="relative z-10">
-                  <h3 className="text-2xl font-black mb-2 tracking-tight">Decision Flowchart</h3>
-                  <p className="text-slate-400 text-sm max-w-xl font-medium">
-                    Alur transmisi data dari sensor menuju pemrosesan logika di ESP32 hingga perintah ke perangkat aktuator.
+                  <h3 className="text-2xl font-black mb-2 flex items-center gap-3 tracking-tight uppercase">
+                    <GitBranch className="text-emerald-400" /> System Flowchart
+                  </h3>
+                  <p className="text-slate-400 text-sm leading-relaxed max-w-2xl font-medium italic">
+                    Visualisasi alur logika program dan transmisi data sistem Abraseed yang dirancang oleh tim teknis.
                   </p>
                 </div>
-                <GitBranch className="absolute right-10 top-1/2 -translate-y-1/2 text-white/5" size={150} />
               </div>
 
-              <div className="flex flex-col items-center space-y-8">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full text-center">
-                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <Sun className="mx-auto mb-2 text-yellow-500" />
-                    <p className="font-bold text-slate-800 text-xs uppercase italic">Light Sensor</p>
-                  </div>
-                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <MoveUp className="mx-auto mb-2 text-blue-500" />
-                    <p className="font-bold text-slate-800 text-xs uppercase italic">Ultrasonic</p>
-                  </div>
-                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hidden md:block">
-                    <Droplets className="mx-auto mb-2 text-cyan-500" />
-                    <p className="font-bold text-slate-800 text-xs uppercase italic">Water Level</p>
-                  </div>
+              {/* Box Pemanggil Gambar */}
+              <div className="bg-white p-4 md:p-8 rounded-[3.5rem] border border-slate-100 shadow-sm overflow-hidden flex justify-center">
+                <div className="relative w-full group">
+                  <img 
+                    src="/flowchart.png" 
+                    alt="Abraseed System Flowchart" 
+                    className="w-full h-auto rounded-3xl shadow-md group-hover:scale-[1.01] transition-transform duration-500"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://via.placeholder.com/1200x800?text=Flowchart+Image+Not+Found+in+Public+Folder";
+                    }}
+                  />
+                  <div className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-slate-900/5 pointer-events-none"></div>
                 </div>
+              </div>
 
-                <ChevronRight className="rotate-90 text-slate-200" size={32} />
-
-                <div className="w-full max-w-2xl bg-white p-10 rounded-[3rem] border-2 border-emerald-500 shadow-xl shadow-emerald-50 text-center relative">
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest">Processing Core</div>
-                  <Cpu className="mx-auto mb-4 text-emerald-600" size={40} />
-                  <h4 className="text-xl font-black text-slate-800 mb-2">Fuzzy Inference Logic</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed font-medium italic">Data input dikonversi menjadi nilai linguistik untuk menentukan output optimal.</p>
-                </div>
-
-                <ChevronRight className="rotate-90 text-slate-200" size={32} />
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full text-center">
-                  <div className="bg-slate-800 p-6 rounded-3xl text-white">
-                    <Zap className="mx-auto mb-2 text-yellow-400" />
-                    <p className="font-black text-[10px] uppercase">Grow LED</p>
-                  </div>
-                  <div className="bg-[#1b4d2c] p-6 rounded-3xl text-white border-t-4 border-emerald-400">
-                    <Waves className="mx-auto mb-2 text-blue-300" />
-                    <p className="font-black text-[10px] uppercase">Pump Relay</p>
-                  </div>
-                  <div className="bg-slate-800 p-6 rounded-3xl text-white">
-                    <Settings className="mx-auto mb-2 text-orange-400" />
-                    <p className="font-black text-[10px] uppercase">Servo Motor</p>
-                  </div>
-                </div>
+              <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">
+                  Dokumentasi Teknis Integrasi IoT & Kendali Cerdas
+                </p>
               </div>
             </div>
           )}
@@ -244,15 +210,15 @@ export default function AboutProject() {
                   </div>
                   <h3 className="text-2xl font-black text-slate-800 mb-4 tracking-tight uppercase text-xs">Misi Utama</h3>
                   <ul className="text-sm text-slate-500 space-y-4 font-medium italic">
-                    <li className="flex items-center gap-3"><ChevronRight size={14} className="text-blue-500" /> Integrasi IoT untuk monitoring 24/7.</li>
-                    <li className="flex items-center gap-3"><ChevronRight size={14} className="text-blue-500" /> Automasi presisi berbasis logika kendali cerdas.</li>
-                    <li className="flex items-center gap-3"><ChevronRight size={14} className="text-blue-500" /> Optimasi sumber daya air dan cahaya.</li>
+                    <li className="flex items-center gap-3"><ChevronRight size={14} className="text-blue-500" /> Monitoring 24/7 via IoT.</li>
+                    <li className="flex items-center gap-3"><ChevronRight size={14} className="text-blue-500" /> Automasi Presisi berbasis Fuzzy.</li>
+                    <li className="flex items-center gap-3"><ChevronRight size={14} className="text-blue-500" /> Optimasi Sumber Daya.</li>
                   </ul>
                 </div>
               </div>
               <div className="bg-[#1b4d2c] p-8 rounded-[2.5rem] flex items-center justify-center gap-6 shadow-xl shadow-green-900/10">
                  <ShieldCheck className="text-emerald-400 shrink-0" size={32} />
-                 <p className="text-xs font-black text-white tracking-widest uppercase">Abraseed V2: Optimized for Industrial Standard Performance.</p>
+                 <p className="text-xs font-black text-white tracking-widest uppercase">Abraseed V2: Standard Performance Certified.</p>
               </div>
             </div>
           )}
@@ -263,8 +229,8 @@ export default function AboutProject() {
               <div className="p-8 bg-slate-50 rounded-full mb-8">
                 <PencilRuler size={48} className="text-slate-200" />
               </div>
-              <h3 className="text-xl font-black text-slate-800 mb-2">Technical Blueprint</h3>
-              <p className="text-slate-400 text-sm font-medium italic">CAD Designs, 3D Models, and Electronic Schematics are being finalized.</p>
+              <h3 className="text-xl font-black text-slate-800 mb-2 uppercase tracking-tighter">Technical Blueprint</h3>
+              <p className="text-slate-400 text-sm font-medium italic italic">CAD Designs & Electronic Schematics are being finalized.</p>
             </div>
           )}
 
