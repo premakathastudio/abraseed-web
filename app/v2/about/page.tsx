@@ -1,18 +1,23 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
-  Cpu, 
-  Settings, 
-  Zap, 
-  Droplets, 
-  Sun, 
-  MoveUp, 
-  Waves,
-  Maximize
+  Cpu, Zap, Maximize, Sun, MoveUp, 
+  LayoutGrid, GitBranch, Box, PencilRuler, 
+  ChevronRight
 } from 'lucide-react';
 
 export default function AboutProject() {
+  // State untuk mengatur tab mana yang aktif
+  const [activeTab, setActiveTab] = useState('parts');
+
+  const tabs = [
+    { id: 'general', label: 'General', icon: <LayoutGrid size={16} /> },
+    { id: 'flowchart', label: 'Flowchart', icon: <GitBranch size={16} /> },
+    { id: 'parts', label: 'Components', icon: <Box size={16} /> },
+    { id: 'design', label: 'Design', icon: <PencilRuler size={16} /> },
+  ];
+
   const mainParts = [
     {
       category: "Brain & Controller",
@@ -24,87 +29,135 @@ export default function AboutProject() {
     {
       category: "Sensor Suite",
       name: "Monitoring Sensors",
-      desc: "Terdiri dari Sensor Lux (Intensitas Cahaya), TOF (Ketinggian Air), dan Ultrasonik (Tinggi Tanaman) untuk data presisi.",
+      desc: "Kombinasi sensor Lux, TOF (Water Level), dan Ultrasonik untuk akuisisi data lingkungan yang presisi.",
       icon: <Maximize className="text-blue-600" size={32} />,
       color: "bg-blue-50"
     },
     {
       category: "Actuators",
       name: "Dynamic Actuators",
-      desc: "DC Pump untuk sirkulasi air, Servo Motor untuk penyesuaian tinggi mekanik, dan Lampu Growth untuk fotosintesis.",
+      desc: "DC Pump, Servo Motor, dan Grow Light Strip yang bekerja otomatis berdasarkan output kendali cerdas.",
       icon: <Zap className="text-orange-600" size={32} />,
       color: "bg-orange-50"
     }
   ];
 
   const subParts = [
-    "Lampu Growth (1-6 Strip)", "DC Motor", "Power Supply Unit", "Modul Relay", "Hydroponic Structure"
+    "Grow Light (1-6 Strip)", "DC Motor 12V", "Step Down Buck Converter", "Relay Module", "Frame PVC & Acrylic"
   ];
 
   return (
-    <div className="min-h-screen bg-transparent py-16 px-4">
+    <div className="min-h-screen bg-transparent py-10 px-4">
       <div className="max-w-6xl mx-auto">
         
-        {/* Header Section */}
-        <div className="text-center mb-20">
-          <h2 className="text-emerald-600 font-black tracking-[0.2em] uppercase text-xs mb-3">Project Architecture</h2>
-          <h1 className="text-4xl md:text-5xl font-black text-slate-800 mb-6">Inside <span className="text-emerald-600">ABRASEED</span></h1>
-          <p className="text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            Abraseed mengintegrasikan teknologi IoT dengan Sistem Kendali Cerdas untuk menciptakan ekosistem hidroponik yang sepenuhnya otomatis dan adaptif.
+        {/* HEADER SECTION */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-black text-slate-800 mb-4">About <span className="text-emerald-600">ABRASEED</span></h1>
+          <p className="text-slate-500 max-w-xl mx-auto text-sm leading-relaxed">
+            Integrasi teknologi IoT dan Sistem Kendali Cerdas untuk optimasi pertanian hidroponik masa depan.
           </p>
         </div>
 
-        {/* Main Components Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {mainParts.map((part, index) => (
-            <div key={index} className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 group">
-              <div className={`w-20 h-20 ${part.color} rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
-                {part.icon}
+        {/* --- NAVIGATION BAR (THE MISSING PART) --- */}
+        <div className="flex justify-center mb-16">
+          <div className="bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-sm border border-slate-100 flex gap-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black transition-all duration-300
+                  ${activeTab === tab.id 
+                    ? 'bg-[#1b4d2c] text-white shadow-lg shadow-green-900/20' 
+                    : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* --- CONTENT AREA --- */}
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+          
+          {/* CONTENT: PARTS (Sesuai permintaan kamu yang fokus ke 3 bagian utama) */}
+          {activeTab === 'parts' && (
+            <div className="space-y-12">
+              {/* Main Components */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {mainParts.map((part, index) => (
+                  <div key={index} className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-50 hover:shadow-xl transition-all duration-500 group">
+                    <div className={`w-16 h-16 ${part.color} rounded-2xl flex items-center justify-center mb-6 group-hover:rotate-6 transition-transform`}>
+                      {part.icon}
+                    </div>
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{part.category}</span>
+                    <h3 className="text-xl font-black text-slate-800 mt-1 mb-3">{part.name}</h3>
+                    <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                      {part.desc}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{part.category}</span>
-              <h3 className="text-2xl font-black text-slate-800 mt-2 mb-4">{part.name}</h3>
-              <p className="text-sm text-slate-500 leading-relaxed font-medium">
-                {part.desc}
-              </p>
-            </div>
-          ))}
-        </div>
 
-        {/* Simplified Support Parts */}
-        <div className="bg-white rounded-[3rem] p-12 border border-slate-100 shadow-sm">
-          <div className="flex flex-col md:flex-row items-center gap-12">
-            <div className="md:w-1/3">
-              <h4 className="text-xl font-black text-slate-800 mb-2">Supporting Components</h4>
-              <p className="text-sm text-slate-500">Infrastruktur tambahan yang menjaga stabilitas performa sistem Abraseed.</p>
-            </div>
-            <div className="md:w-2/3 flex flex-wrap gap-3">
-              {subParts.map((item, i) => (
-                <span key={i} className="px-5 py-3 bg-slate-50 text-slate-600 text-xs font-bold rounded-2xl border border-slate-100 hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-default">
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
+              {/* Support Components */}
+              <div className="bg-white rounded-[2.5rem] p-10 border border-slate-100 flex flex-col md:flex-row items-center gap-8">
+                <div className="md:w-1/3 text-center md:text-left">
+                  <h4 className="text-lg font-black text-slate-800 mb-1">Supporting Parts</h4>
+                  <p className="text-xs text-slate-400">Komponen pendukung stabilitas sistem.</p>
+                </div>
+                <div className="md:w-2/3 flex flex-wrap justify-center md:justify-start gap-2">
+                  {subParts.map((item, i) => (
+                    <span key={i} className="px-4 py-2 bg-slate-50 text-slate-500 text-[10px] font-bold rounded-xl border border-slate-100">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
 
-        {/* Logic Insight (Optional - Based on your Flowchart) */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-emerald-900 rounded-[2.5rem] p-8 text-white flex items-center gap-6">
-            <div className="p-4 bg-white/10 rounded-2xl"><Sun size={24}/></div>
-            <div>
-              <p className="text-xs font-bold text-emerald-300 uppercase tracking-widest">Fuzzy Logic A</p>
-              <h5 className="font-bold">Intensitas Lux → Strip Lampu</h5>
+              {/* Logic Summary */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-[#1b4d2c] rounded-[2rem] p-8 text-white flex items-center justify-between group hover:scale-[1.02] transition-transform cursor-default">
+                  <div className="flex items-center gap-5">
+                    <div className="p-4 bg-white/10 rounded-2xl text-emerald-400"><Sun size={24}/></div>
+                    <div>
+                      <p className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest">Logic Control A</p>
+                      <h5 className="font-bold text-sm">Fuzzy: Light Lux → LED Strips</h5>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className="text-emerald-700" />
+                </div>
+                <div className="bg-slate-900 rounded-[2rem] p-8 text-white flex items-center justify-between group hover:scale-[1.02] transition-transform cursor-default">
+                  <div className="flex items-center gap-5">
+                    <div className="p-4 bg-white/10 rounded-2xl text-blue-400"><MoveUp size={24}/></div>
+                    <div>
+                      <p className="text-[10px] font-bold text-blue-400/60 uppercase tracking-widest">Logic Control B</p>
+                      <h5 className="font-bold text-sm">Fuzzy: Plant Height → Servo Angle</h5>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className="text-slate-700" />
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="bg-blue-900 rounded-[2.5rem] p-8 text-white flex items-center gap-6">
-            <div className="p-4 bg-white/10 rounded-2xl"><MoveUp size={24}/></div>
-            <div>
-              <p className="text-xs font-bold text-blue-300 uppercase tracking-widest">Fuzzy Logic B</p>
-              <h5 className="font-bold">Tinggi Tanaman → Sudut Servo</h5>
-            </div>
-          </div>
-        </div>
+          )}
 
+          {/* PLACEHOLDERS UNTUK TAB LAIN */}
+          {activeTab === 'general' && (
+            <div className="text-center py-20 bg-white rounded-[3rem] border border-dashed border-slate-200">
+              <p className="text-slate-400 font-bold">General Information Content Coming Soon...</p>
+            </div>
+          )}
+          {activeTab === 'flowchart' && (
+            <div className="text-center py-20 bg-white rounded-[3rem] border border-dashed border-slate-200">
+              <p className="text-slate-400 font-bold">Flowchart Visualization Coming Soon...</p>
+            </div>
+          )}
+          {activeTab === 'design' && (
+            <div className="text-center py-20 bg-white rounded-[3rem] border border-dashed border-slate-200">
+              <p className="text-slate-400 font-bold">3D Design & CAD Files Coming Soon...</p>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );
