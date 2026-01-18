@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { LayoutGrid, Box, BrainCircuit, GitBranch, PencilRuler, Cpu, Waves, Sun, Power, Activity, Database, Cloud } from 'lucide-react';
 
-// --- KOMPONEN INTERNAL (Pengganti file yang terpisah) ---
+// --- KOMPONEN TAB ---
 
 const GeneralTab = () => (
   <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-4 animate-in fade-in duration-500">
@@ -60,21 +60,49 @@ const FuzzyTab = () => (
         </div>
       </div>
       <p className="text-sm text-slate-500 italic font-medium leading-relaxed">
-        Sistem menentukan durasi atau status pompa berdasarkan kombinasi tingkat kekeringan (level air) dan kebutuhan cahaya tanaman.
+        Sistem menentukan status pompa berdasarkan kombinasi tingkat level air dan kebutuhan cahaya tanaman untuk efisiensi sumber daya.
       </p>
     </div>
   </div>
 );
 
 const FlowchartTab = () => (
-  <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm text-center animate-in fade-in duration-500">
-    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
-      <GitBranch size={40} />
+  <div className="bg-white p-4 md:p-8 rounded-[2.5rem] border border-slate-100 shadow-sm animate-in fade-in duration-500">
+    <div className="text-center mb-6">
+      <h3 className="font-black text-slate-800 text-xl uppercase tracking-tight">System Workflow</h3>
+      <p className="text-slate-500 max-w-sm mx-auto mt-2 text-sm font-medium">
+        Alur transmisi data dari sensor fisik hingga visualisasi dashboard.
+      </p>
     </div>
-    <h3 className="font-black text-slate-800 text-xl uppercase tracking-tight">System Workflow</h3>
-    <p className="text-slate-500 max-w-sm mx-auto mt-2 text-sm">
-      ESP32 Membaca Sensor → Kalkulasi Fuzzy → Kirim JSON ke Supabase API → Dashboard Web Update Real-time.
-    </p>
+
+    {/* AREA GAMBAR FLOWCHART */}
+    <div className="bg-slate-50 rounded-3xl p-4 md:p-6 border border-dashed border-slate-200">
+      <img 
+        src="/flowchart.png" 
+        alt="Abraseed System Flowchart" 
+        className="w-full h-auto rounded-2xl shadow-sm mx-auto"
+        onError={(e) => {
+          e.currentTarget.src = "https://via.placeholder.com/800x400?text=Simpan+File+flowchart.png+di+Folder+Public";
+        }}
+      />
+    </div>
+
+    {/* KETERANGAN ALUR */}
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+      {[
+        { step: "1", label: "Sensor Read" },
+        { step: "2", label: "JSON Pack" },
+        { step: "3", label: "API Post" },
+        { step: "4", label: "UI Update" }
+      ].map((item, i) => (
+        <div key={i} className="text-center">
+          <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-xs font-black">
+            {item.step}
+          </div>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</p>
+        </div>
+      ))}
+    </div>
   </div>
 );
 
@@ -135,7 +163,7 @@ export default function AboutProject() {
           </div>
         </div>
 
-        {/* RENDER CONTENT SECARA DINAMIS */}
+        {/* RENDER CONTENT */}
         <div className="mt-8 max-w-3xl mx-auto">
           {activeTab === 'general' && <GeneralTab />}
           {activeTab === 'parts' && <PartsTab />}
