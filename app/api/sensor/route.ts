@@ -10,30 +10,29 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    // Memasukkan data lengkap sesuai desain ABRASEED
+    // Sesuaikan variabel dengan nama baru: tinggi_air, intensitas_cahaya, kondisi_pompa
     const { error } = await supabase
-      .from('log_sensor')
+      .from('monitoring') // Pastikan nama tabel adalah 'monitoring' sesuai langkah Supabase tadi
       .insert([
         { 
-          light_intensity: body.light_intensity,
-          plant_height: body.plant_height,
-          plant_age: body.plant_age,
-          soil_moisture: body.soil_moisture,
-          pump_status: body.pump_status,
-          system_status: body.system_status
+          tinggi_air: body.tinggi_air,
+          intensitas_cahaya: body.intensitas_cahaya,
+          kondisi_pompa: body.kondisi_pompa
+          // Hapus kolom lama yang tidak digunakan agar tidak terjadi error 404
         }
       ]);
 
     if (error) throw error;
-    return NextResponse.json({ message: "Data ABRASEED Berhasil Masuk!" });
+    return NextResponse.json({ message: "Data Baru ABRASEED Berhasil Masuk!" });
   } catch (err) {
-    return NextResponse.json({ error: "Gagal simpan" }, { status: 500 });
+    console.error(err); // Menambahkan log error agar mudah di-debug di Vercel
+    return NextResponse.json({ error: "Gagal simpan ke database" }, { status: 500 });
   }
 }
 
 export async function GET() {
   const { data } = await supabase
-    .from('log_sensor')
+    .from('monitoring') // Sesuaikan nama tabel
     .select('*')
     .order('created_at', { ascending: false })
     .limit(1);
