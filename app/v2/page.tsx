@@ -47,9 +47,9 @@ export default function DashboardV2() {
         const dataTime = new Date(latestData.created_at).getTime();
         const now = new Date().getTime();
         
-        // Heartbeat: 15 detik telat = Offline
+        // Heartbeat: 60 detik telat = Offline
         const diffSeconds = (now - dataTime) / 1000;
-        setIsConnected(diffSeconds < 15); 
+        setIsConnected(diffSeconds < 60); 
 
         setSensor({
           tinggi_air: latestData.tinggi_air || 0,
