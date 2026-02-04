@@ -103,7 +103,7 @@ export default function DashboardV2() {
           <div className="bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
             <RefreshCcw size={18} className={`${isUpdating ? 'animate-spin text-emerald-600' : 'text-slate-300'}`} />
             <div className="flex flex-col leading-none">
-                <span className="text-[9px] font-black text-slate-400 uppercase mb-1">Last Data In</span>
+                <span className="text-[9px] font-black text-slate-400 uppercase mb-1 italic">Last Sync</span>
                 <span className="text-xs font-bold text-slate-600 font-mono italic">{lastSeen ? lastSeen.toLocaleTimeString() : '--:--:--'}</span>
             </div>
           </div>
@@ -123,7 +123,7 @@ export default function DashboardV2() {
         </div>
       </div>
 
-      {/* 3 KARTU UTAMA */}
+      {/* 3 KARTU UTAMA - DESIGN LENGKAP DENGAN OVERLAY */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
         {[
           { title: "Water Level", value: sensor.tinggi_air, unit: "cm", bg: "bg-blue-600", shadow: "shadow-blue-600/40", icon: <Waves size={120} /> },
@@ -135,10 +135,11 @@ export default function DashboardV2() {
             <p className="opacity-60 text-[10px] font-black uppercase tracking-widest mb-1">{card.title}</p>
             <h3 className="text-6xl font-black tracking-tighter">{card.value}<span className="text-xl ml-2 opacity-40 italic font-light">{card.unit}</span></h3>
             
+            {/* OVERLAY OFFLINE TIPIS */}
             {!isConnected && (
-              <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center transition-all">
+              <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center transition-all duration-500">
                 <div className="flex flex-col items-center gap-2">
-                  <div className="flex items-center gap-2 bg-rose-600 text-white px-4 py-1.5 rounded-full animate-pulse shadow-lg">
+                  <div className="flex items-center gap-2 bg-rose-600 text-white px-4 py-1.5 rounded-full animate-pulse shadow-xl">
                     <WifiOff size={14} />
                     <span className="text-[10px] font-black uppercase tracking-widest">Offline</span>
                   </div>
@@ -152,11 +153,16 @@ export default function DashboardV2() {
 
       {/* BOTTOM SECTION: PUMP & LOGS */}
       <div className="flex flex-col xl:flex-row gap-8 items-start">
+        {/* KARTU POMPA DINAMIS (Merah/Ijo Muda) */}
         <div className={`w-full xl:w-72 p-8 rounded-[2.5rem] border-2 transition-all duration-500 shadow-2xl ${
-          sensor.kondisi_pompa === 'HIDUP' && isConnected ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-100'
+          sensor.kondisi_pompa === 'HIDUP' && isConnected 
+          ? 'bg-emerald-50 border-emerald-200 shadow-emerald-200/20' 
+          : 'bg-rose-50 border-rose-100 shadow-rose-200/20'
         }`}>
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all ${
-            sensor.kondisi_pompa === 'HIDUP' && isConnected ? 'bg-emerald-500 text-white animate-bounce shadow-lg' : 'bg-rose-500 text-white grayscale opacity-50'
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${
+            sensor.kondisi_pompa === 'HIDUP' && isConnected 
+            ? 'bg-emerald-500 text-white animate-bounce shadow-lg shadow-emerald-500/50' 
+            : 'bg-rose-500 text-white grayscale opacity-50'
           }`}>
             <Power size={28} />
           </div>
@@ -164,13 +170,17 @@ export default function DashboardV2() {
           <h4 className={`text-4xl font-black tracking-tighter ${sensor.kondisi_pompa === 'HIDUP' && isConnected ? 'text-emerald-700' : 'text-rose-700'}`}>
             {isConnected ? sensor.kondisi_pompa : 'OFFLINE'}
           </h4>
+          <p className="text-[10px] mt-3 font-bold opacity-60 italic leading-tight">
+            {!isConnected ? 'Waiting for ESP32...' : sensor.kondisi_pompa === 'HIDUP' ? 'System is watering now...' : 'Pump is on standby.'}
+          </p>
         </div>
 
+        {/* LOGS TABLE - DENGAN WARNA BARIS */}
         <div className="flex-1 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-8 py-5 border-b border-slate-50 flex justify-between bg-slate-50/30 items-center">
              <div className="flex items-center gap-3">
                 <History size={16} className="text-slate-400" />
-                <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Recent Logs</span>
+                <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Activity History</span>
              </div>
              {!isConnected && <span className="text-[9px] font-black text-rose-500 animate-pulse uppercase tracking-tighter">Connection Lost</span>}
           </div>
@@ -178,20 +188,22 @@ export default function DashboardV2() {
             <thead className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] border-b border-slate-50">
               <tr>
                 <th className="px-8 py-4">Time</th>
-                <th className="px-8 py-4">Pump Status</th>
+                <th className="px-8 py-4">Status</th>
                 <th className="px-8 py-4 text-right">Data In</th>
               </tr>
             </thead>
-            <tbody className="text-[11px] font-bold">
+            <tbody className="text-[11px] font-bold text-slate-500">
               {logs.map((log, i) => (
                 <tr key={i} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
                   <td className="px-8 py-3 text-slate-400 font-mono italic">{new Date(log.created_at).toLocaleTimeString()}</td>
                   <td className="px-8 py-3">
-                    <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase ${log.kondisi_pompa === 'HIDUP' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}>
+                    <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase ${
+                      log.kondisi_pompa === 'HIDUP' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
+                    }`}>
                       {log.kondisi_pompa}
                     </span>
                   </td>
-                  <td className="px-8 py-3 text-right text-[10px] font-black text-slate-700">
+                  <td className="px-8 py-3 text-right text-[10px] font-black text-slate-700 italic">
                     {log.intensitas_cahaya}lx / {log.tinggi_air}cm
                   </td>
                 </tr>
@@ -204,22 +216,22 @@ export default function DashboardV2() {
       {/* MODAL CONFIG */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[999] flex items-center justify-center p-4 text-slate-800">
-          <div className="bg-white rounded-[3rem] p-12 max-w-md w-full shadow-2xl relative">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-slate-400 hover:text-black"><X size={24} /></button>
-            <h2 className="text-3xl font-black mb-8 italic lowercase tracking-tighter">Settings</h2>
+          <div className="bg-white rounded-[3rem] p-12 max-w-md w-full shadow-2xl relative border border-white/20">
+            <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-slate-400 hover:text-black transition-colors"><X size={24} /></button>
+            <h2 className="text-3xl font-black mb-8 italic tracking-tighter">Configuration</h2>
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Plant Name</label>
-                <input type="text" placeholder={plantConfig.name} className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100 font-bold outline-none" onChange={(e) => setNewPlantName(e.target.value)} />
+                <label className="text-[10px] font-black uppercase text-slate-400 ml-2 italic">Plant Name</label>
+                <input type="text" placeholder={plantConfig.name} className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100 font-bold outline-none focus:ring-2 ring-emerald-500/20 transition-all" onChange={(e) => setNewPlantName(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Start Date</label>
-                <input type="date" className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100 font-bold outline-none" onChange={(e) => setNewPlantDate(e.target.value)} />
+                <label className="text-[10px] font-black uppercase text-slate-400 ml-2 italic">Planting Date</label>
+                <input type="date" className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100 font-bold outline-none focus:ring-2 ring-emerald-500/20 transition-all" onChange={(e) => setNewPlantDate(e.target.value)} />
               </div>
               <button onClick={async () => {
                 const { error } = await supabase.from('plant_settings').update({ plant_name: newPlantName || plantConfig.name, planting_date: newPlantDate || plantConfig.date }).eq('id', 1);
                 if (!error) { setIsModalOpen(false); fetchData(); }
-              }} className="w-full py-5 bg-[#1b4d2c] text-white rounded-2xl font-black uppercase tracking-widest shadow-xl">Apply Changes</button>
+              }} className="w-full py-5 bg-[#1b4d2c] text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-[#1b4d2c]/30 hover:scale-[1.02] active:scale-95 transition-all">Save Changes</button>
             </div>
           </div>
         </div>
