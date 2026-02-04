@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import Image from 'next/image'; // Import komponen Image
 import { 
   Sun, Activity, Zap, RefreshCcw, 
   Settings2, X, Waves, History, Power
 } from 'lucide-react';
 
 export default function DashboardV2() {
+  // ... (state tetap sama seperti sebelumnya)
   const [sensor, setSensor] = useState({
     intensitas_cahaya: 0,
     tinggi_air: 0,
@@ -77,17 +79,33 @@ export default function DashboardV2() {
     <div className="min-h-screen bg-slate-50 p-6 md:p-10 space-y-8 font-sans">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-        <div>
+        <div className="space-y-3">
+          {/* Logo Section */}
           <div className="flex items-center gap-2 mb-1">
              <span className={`h-2 w-2 rounded-full animate-pulse ${sensor.kondisi_pompa === 'HIDUP' ? 'bg-blue-500' : 'bg-slate-300'}`}></span>
              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                System {sensor.system_status} — Pump: {sensor.kondisi_pompa}
              </p>
           </div>
-          <h2 className="text-4xl font-black text-[#1b4d2c] flex items-center gap-3 lowercase italic tracking-tighter">
-            {plantConfig.name} <span className="text-slate-200 not-italic">/</span> v2
-          </h2>
+          
+          <div className="flex items-center gap-4">
+            {/* Logo Abraseed */}
+            <div className="relative w-40 h-12">
+              <Image 
+                src="/logo-abraseed.png" 
+                alt="Abraseed Logo" 
+                fill
+                className="object-contain object-left"
+                priority
+              />
+            </div>
+            <span className="text-slate-200 text-3xl font-thin">/</span>
+            <h2 className="text-2xl font-black text-[#1b4d2c] lowercase italic tracking-tighter notranslate">
+              {plantConfig.name}
+            </h2>
+          </div>
         </div>
+
         <div className="flex gap-3">
           <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 bg-white border border-slate-200 px-5 py-3 rounded-2xl text-slate-600 font-bold text-xs hover:shadow-md transition-all active:scale-95">
             <Settings2 size={16} /> Config
@@ -115,7 +133,7 @@ export default function DashboardV2() {
           <h3 className="text-4xl font-black text-slate-800 tracking-tighter">{sensor.intensitas_cahaya} <span className="text-lg font-medium text-slate-300">Lux</span></h3>
         </div>
 
-        {/* Card Pompa (BARU) */}
+        {/* Card Pompa */}
         <div className={`p-8 rounded-[2.5rem] border-l-8 shadow-sm transition-transform hover:scale-[1.02] ${sensor.kondisi_pompa === 'HIDUP' ? 'bg-blue-600 border-blue-400' : 'bg-white border-slate-200'}`}>
           <Power className={`${sensor.kondisi_pompa === 'HIDUP' ? 'text-white animate-pulse' : 'text-slate-300'} mb-4`} size={32} />
           <p className={`${sensor.kondisi_pompa === 'HIDUP' ? 'text-blue-200' : 'text-slate-400'} text-[10px] font-black uppercase tracking-widest`}>Status Pompa</p>
