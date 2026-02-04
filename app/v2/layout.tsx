@@ -34,9 +34,23 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
       {/* SIDEBAR FIXED */}
       <aside className="fixed left-0 top-0 h-screen w-64 bg-[#1b4d2c] text-white p-8 flex flex-col justify-between z-50 shadow-2xl">
         <div>
-          <div className="mb-12">
-            <h2 className="text-3xl font-black tracking-tighter italic">ABRA<span className="text-green-400">SEED</span></h2>
-            <p className="text-[10px] font-bold text-green-200/40 tracking-[0.4em] uppercase">Version 2.0</p>
+          {/* LOGO SECTION - Sekarang pakai gambar */}
+          <div className="mb-12 notranslate">
+            <img 
+              src="/logo-abraseed.png.png" 
+              alt="Abraseed Logo" 
+              className="w-full h-auto object-contain brightness-110 drop-shadow-lg"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (target.src.includes(".png.png")) {
+                  target.src = "/logo-abraseed.png";
+                }
+              }}
+            />
+            <div className="mt-2 h-[1px] w-full bg-white/10"></div>
+            <p className="mt-2 text-[10px] font-bold text-green-200/40 tracking-[0.4em] uppercase text-center">
+              Version 2.0
+            </p>
           </div>
 
           <nav className="space-y-3">
