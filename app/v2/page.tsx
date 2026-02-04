@@ -2,14 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import Image from 'next/image'; // Import komponen Image
 import { 
-  Sun, Activity, Zap, RefreshCcw, 
+  Sun, Activity, RefreshCcw, 
   Settings2, X, Waves, History, Power
 } from 'lucide-react';
 
 export default function DashboardV2() {
-  // ... (state tetap sama seperti sebelumnya)
   const [sensor, setSensor] = useState({
     intensitas_cahaya: 0,
     tinggi_air: 0,
@@ -79,27 +77,28 @@ export default function DashboardV2() {
     <div className="min-h-screen bg-slate-50 p-6 md:p-10 space-y-8 font-sans">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-        <div className="space-y-3">
-          {/* Logo Section */}
-          <div className="flex items-center gap-2 mb-1">
+        <div className="space-y-4">
+          {/* Status Indicator */}
+          <div className="flex items-center gap-2">
              <span className={`h-2 w-2 rounded-full animate-pulse ${sensor.kondisi_pompa === 'HIDUP' ? 'bg-blue-500' : 'bg-slate-300'}`}></span>
              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                System {sensor.system_status} — Pump: {sensor.kondisi_pompa}
              </p>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             {/* Logo Abraseed */}
-            <div className="relative w-40 h-12">
-              <Image 
+            <div className="notranslate">
+              <img 
                 src="/logo-abraseed.png" 
                 alt="Abraseed Logo" 
-                fill
-                className="object-contain object-left"
-                priority
+                className="h-10 md:h-12 w-auto object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'; // Sembunyikan jika error
+                }}
               />
             </div>
-            <span className="text-slate-200 text-3xl font-thin">/</span>
+            <span className="text-slate-200 text-3xl font-thin hidden md:block">/</span>
             <h2 className="text-2xl font-black text-[#1b4d2c] lowercase italic tracking-tighter notranslate">
               {plantConfig.name}
             </h2>
