@@ -87,14 +87,18 @@ export default function DashboardV2() {
           </div>
           
           <div className="flex items-center gap-4 flex-wrap">
-            {/* Logo Abraseed */}
+            {/* Logo Abraseed dengan proteksi double extension */}
             <div className="notranslate">
               <img 
-                src="/logo-abraseed.png" 
+                src="/logo-abraseed.png.png" 
                 alt="Abraseed Logo" 
                 className="h-10 md:h-12 w-auto object-contain"
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none'; // Sembunyikan jika error
+                    // Fallback otomatis jika nanti kamu rename filenya jadi normal
+                    const target = e.target as HTMLImageElement;
+                    if (target.src.includes(".png.png")) {
+                        target.src = "/logo-abraseed.png";
+                    }
                 }}
               />
             </div>
