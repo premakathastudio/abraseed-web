@@ -1,126 +1,11 @@
 "use client";
 
 import React, { useState } from 'react';
-import { LayoutGrid, Box, BrainCircuit, GitBranch, PencilRuler, Cpu, Waves, Sun, Power, Activity, Database, Cloud } from 'lucide-react';
+import { LayoutGrid, Box, BrainCircuit, GitBranch, PencilRuler } from 'lucide-react';
 
-// --- KOMPONEN TAB ---
-
-const GeneralTab = () => (
-  <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-4 animate-in fade-in duration-500">
-    <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Project V2 Overview</h2>
-    <p className="text-slate-500 leading-relaxed font-medium">
-      Abraseed V2 adalah sistem otomasi pertanian cerdas yang difokuskan pada pemantauan level air (tinggi air) dan intensitas cahaya secara real-time untuk memastikan pertumbuhan tanaman yang optimal melalui kontrol pompa otomatis.
-    </p>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-      <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3 text-blue-700 font-bold text-xs uppercase tracking-widest"><Database size={16}/> Supabase Cloud</div>
-      <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex items-center gap-3 text-emerald-700 font-bold text-xs uppercase tracking-widest"><Activity size={16}/> Real-time Monitoring</div>
-      <div className="p-4 bg-purple-50 rounded-2xl border border-purple-100 flex items-center gap-3 text-purple-700 font-bold text-xs uppercase tracking-widest"><Cloud size={16}/> Next.js Interface</div>
-    </div>
-  </div>
-);
-
-const PartsTab = () => {
-  const components = [
-    { name: "ESP32 DevKit V1", role: "Main Controller", icon: <Cpu className="text-purple-500" /> },
-    { name: "Ultrasonic HC-SR04", role: "Sensor Tinggi Air", icon: <Waves className="text-blue-500" /> },
-    { name: "LDR / Photoresistor", role: "Sensor Cahaya", icon: <Sun className="text-yellow-500" /> },
-    { name: "Relay & Water Pump", role: "Aktuator Sistem", icon: <Power className="text-emerald-500" /> },
-  ];
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in duration-500">
-      {components.map((item, i) => (
-        <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 flex items-center gap-4 shadow-sm hover:border-emerald-300 transition-all">
-          <div className="p-4 bg-slate-50 rounded-2xl">{item.icon}</div>
-          <div>
-            <h4 className="font-black text-slate-800 uppercase text-sm">{item.name}</h4>
-            <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{item.role}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const FuzzyTab = () => (
-  <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm animate-in fade-in duration-500">
-    <h2 className="text-2xl font-black text-slate-800 mb-6 uppercase tracking-tight">Fuzzy Logic Controller</h2>
-    <div className="space-y-6">
-      <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
-        <div className="w-2 h-12 bg-emerald-500 rounded-full"></div>
-        <div>
-          <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Input Variables</p>
-          <p className="font-bold text-slate-700">Tinggi Air (cm) & Intensitas Cahaya (Lux)</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
-        <div className="w-2 h-12 bg-blue-500 rounded-full"></div>
-        <div>
-          <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Output Variable</p>
-          <p className="font-bold text-slate-700">Kondisi Pompa (Hidup/Mati)</p>
-        </div>
-      </div>
-      <p className="text-sm text-slate-500 italic font-medium leading-relaxed">
-        Sistem menentukan status pompa berdasarkan kombinasi tingkat level air dan kebutuhan cahaya tanaman untuk efisiensi sumber daya.
-      </p>
-    </div>
-  </div>
-);
-
-const FlowchartTab = () => (
-  <div className="bg-white p-4 md:p-8 rounded-[2.5rem] border border-slate-100 shadow-sm animate-in fade-in duration-500">
-    <div className="text-center mb-6">
-      <h3 className="font-black text-slate-800 text-xl uppercase tracking-tight">System Workflow</h3>
-      <p className="text-slate-500 max-w-sm mx-auto mt-2 text-sm font-medium">
-        Alur transmisi data dari sensor fisik hingga visualisasi dashboard.
-      </p>
-    </div>
-
-    {/* AREA GAMBAR FLOWCHART */}
-    <div className="bg-slate-50 rounded-3xl p-4 md:p-6 border border-dashed border-slate-200">
-      <img 
-        src="/flowchart.png" 
-        alt="Abraseed System Flowchart" 
-        className="w-full h-auto rounded-2xl shadow-sm mx-auto"
-        onError={(e) => {
-          e.currentTarget.src = "https://via.placeholder.com/800x400?text=Simpan+File+flowchart.png+di+Folder+Public";
-        }}
-      />
-    </div>
-
-    {/* KETERANGAN ALUR */}
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-      {[
-        { step: "1", label: "Sensor Read" },
-        { step: "2", label: "JSON Pack" },
-        { step: "3", label: "API Post" },
-        { step: "4", label: "UI Update" }
-      ].map((item, i) => (
-        <div key={i} className="text-center">
-          <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-xs font-black">
-            {item.step}
-          </div>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-const DesignTab = () => (
-  <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm animate-in fade-in duration-500 space-y-6">
-    <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Visual Identity</h2>
-    <div className="flex gap-4">
-      <div className="w-12 h-12 rounded-full bg-[#1b4d2c] border-4 border-white shadow-lg" title="Primary Green"></div>
-      <div className="w-12 h-12 rounded-full bg-emerald-500 border-4 border-white shadow-lg" title="Secondary Green"></div>
-      <div className="w-12 h-12 rounded-full bg-blue-500 border-4 border-white shadow-lg" title="Water Blue"></div>
-    </div>
-    <div className="p-4 bg-slate-50 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest">
-      Glassmorphism • High Contrast • Modern Minimalism
-    </div>
-  </div>
-);
-
-// --- MAIN COMPONENT ---
+// IMPORT KOMPONEN LUAR (Pastikan file-file ini sudah ada di folder component)
+import GeneralTab from './component/GeneralTab'; 
+// Catatan: Jika tab lain belum kamu pisah filenya, mereka akan tetap menggunakan kodingan internal di bawah ini.
 
 export default function AboutProject() {
   const [activeTab, setActiveTab] = useState('general');
@@ -165,14 +50,43 @@ export default function AboutProject() {
 
         {/* RENDER CONTENT */}
         <div className="mt-8 max-w-3xl mx-auto">
+          {/* Bagian ini sekarang memanggil file GeneralTab yang baru kamu edit */}
           {activeTab === 'general' && <GeneralTab />}
-          {activeTab === 'parts' && <PartsTab />}
-          {activeTab === 'fuzzy' && <FuzzyTab />}
-          {activeTab === 'flowchart' && <FlowchartTab />}
-          {activeTab === 'design' && <DesignTab />}
+          
+          {/* Tab lain masih menggunakan placeholder/internal sampai kamu memisahkan filenya */}
+          {activeTab === 'parts' && <DefaultPartsTab />}
+          {activeTab === 'fuzzy' && <DefaultFuzzyTab />}
+          {activeTab === 'flowchart' && <DefaultFlowchartTab />}
+          {activeTab === 'design' && <DefaultDesignTab />}
         </div>
-
       </div>
     </div>
   );
 }
+
+// --- PLACEHOLDER COMPONENTS (Agar tidak error sebelum file lain dipisah) ---
+// Kamu bisa memindahkan ini ke file terpisah nantinya seperti GeneralTab
+
+const DefaultPartsTab = () => (
+  <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 text-center">
+    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Konten Components sedang disiapkan...</p>
+  </div>
+);
+
+const DefaultFuzzyTab = () => (
+  <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 text-center">
+    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Konten Fuzzy Logic sedang disiapkan...</p>
+  </div>
+);
+
+const DefaultFlowchartTab = () => (
+  <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 text-center">
+    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Konten Flowchart sedang disiapkan...</p>
+  </div>
+);
+
+const DefaultDesignTab = () => (
+  <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 text-center">
+    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Konten Design sedang disiapkan...</p>
+  </div>
+);
