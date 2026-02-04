@@ -30,21 +30,17 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#F0F7F2] relative overflow-hidden">
-      {/* BACKGROUND DECORATION (Biar efek transparan sidebar kelihatan) */}
-      <div className="fixed top-[-10%] left-[-5%] w-[500px] h-[500px] bg-green-200/40 blur-[120px] rounded-full -z-10"></div>
-      <div className="fixed bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-emerald-100/50 blur-[150px] rounded-full -z-10"></div>
-
-      {/* SIDEBAR - Dark Emerald Glassmorphism */}
-      <aside className="fixed left-4 top-4 bottom-4 w-72 bg-[#1b4d2c]/85 backdrop-blur-2xl text-white p-6 flex flex-col justify-between z-50 shadow-[20px_0_50px_rgba(0,0,0,0.15)] rounded-[2.5rem] border border-white/10">
+    <div className="flex min-h-screen bg-[#F0F7F2]">
+      {/* SIDEBAR - Solid & Professional */}
+      <aside className="fixed left-0 top-0 h-screen w-72 bg-[#1b4d2c] text-white p-6 flex flex-col justify-between z-50 shadow-[10px_0_40px_rgba(0,0,0,0.15)]">
         <div>
-          {/* LOGO AREA - Melayang di atas kaca */}
+          {/* LOGO AREA - White Box */}
           <div className="mb-10 group">
-            <div className="relative bg-white p-3 rounded-[2rem] flex items-center justify-center overflow-hidden h-40 shadow-2xl border border-white/20">
+            <div className="relative bg-white p-4 rounded-[2.5rem] flex items-center justify-center overflow-hidden h-44 shadow-2xl border-4 border-white/10">
               <img 
                 src="/logo-abraseed.png.png" 
                 alt="Abraseed Logo" 
-                className="w-full h-full object-contain scale-[2.5] transition-transform duration-700 ease-in-out group-hover:scale-[2.7]"
+                className="w-full h-full object-contain scale-[2.5] transition-transform duration-700 ease-in-out group-hover:scale-[2.6]"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   if (target.src.includes(".png.png")) target.src = "/logo-abraseed.png";
@@ -56,30 +52,31 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
               <p className="text-[10px] font-medium text-green-200/40 italic tracking-tight">
                 Project suka-suka,
               </p>
-              <p className="text-[12px] font-black uppercase tracking-[0.15em] text-amber-400 drop-shadow-md">
+              <p className="text-[13px] font-black uppercase tracking-[0.1em] text-white mt-1 drop-shadow-md">
                 Output Luar Biasa
               </p>
+              <div className="h-[2px] w-10 bg-white/20 mx-auto mt-4 rounded-full"></div>
             </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="space-y-2">
+          {/* Navigation - With Outlines per Option */}
+          <nav className="space-y-3 mt-4">
             {menuItems.map((item) => {
               const isActive = pathname === item.path;
               return (
                 <Link 
                   key={item.path} 
                   href={item.path}
-                  className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-500 group ${
+                  className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 border ${
                     isActive 
-                    ? 'bg-white text-[#1b4d2c] shadow-lg shadow-black/10 scale-[1.05]' 
-                    : 'text-green-100/30 hover:bg-white/10 hover:text-white'
+                    ? 'bg-white text-[#1b4d2c] border-white shadow-xl translate-x-2' 
+                    : 'bg-transparent text-green-100/40 border-white/10 hover:border-white/30 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  <div className={`${isActive ? 'text-[#1b4d2c]' : 'text-green-400/50 group-hover:text-green-300'}`}>
+                  <div className={`${isActive ? 'text-[#1b4d2c]' : 'text-green-400/50 group-hover:text-green-300'} transition-colors`}>
                     {item.icon}
                   </div>
-                  <span className="text-[13px] tracking-wide">{item.name}</span>
+                  <span className="text-[13px] tracking-wide uppercase">{item.name}</span>
                 </Link>
               );
             })}
@@ -87,39 +84,39 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Bottom Switcher */}
-        <Link href="/" className="flex items-center justify-center gap-3 py-4 bg-white/5 border border-white/5 rounded-2xl text-green-100/20 hover:text-white hover:bg-white/10 transition-all text-[9px] font-black uppercase tracking-widest">
+        <Link href="/" className="flex items-center justify-center gap-3 py-4 border border-white/10 rounded-2xl text-green-100/30 hover:text-white hover:bg-white/10 transition-all text-[9px] font-black uppercase tracking-[0.2em]">
           <ArrowLeft size={14} />
-          Switch to v1.0
+          Back to v1.0
         </Link>
       </aside>
 
-      {/* CONTENT AREA - Dikasih margin kiri lebih besar karena sidebar melayang */}
-      <main className="flex-1 ml-80 p-12 min-h-screen">
+      {/* CONTENT AREA */}
+      <main className="flex-1 ml-72 p-12 min-h-screen">
         {children}
       </main>
 
-      {/* MUSIC PLAYER - Glassmorphism Style */}
+      {/* MUSIC PLAYER */}
       <audio ref={audioRef} loop>
         <source src="/laguabra.mpeg" type="audio/mpeg" />
       </audio>
 
-      <div className="fixed bottom-10 right-10 z-[100]">
+      <div className="fixed bottom-8 right-8 z-[100]">
         <button 
           onClick={toggleMusic}
-          className={`flex items-center gap-4 p-2 pr-6 rounded-2xl backdrop-blur-md border transition-all duration-500 shadow-2xl ${
+          className={`flex items-center gap-4 p-3 pr-7 rounded-2xl transition-all duration-500 shadow-2xl border-2 ${
             isPlaying 
-            ? 'bg-[#1b4d2c]/90 border-amber-400/30 text-white' 
-            : 'bg-white/80 border-slate-200 text-slate-500'
+            ? 'bg-[#1b4d2c] border-white/20 text-white' 
+            : 'bg-white border-slate-200 text-slate-500'
           }`}
         >
-          <div className={`p-3 rounded-xl transition-all ${isPlaying ? 'bg-amber-400 text-[#1b4d2c]' : 'bg-slate-100'}`}>
-            {isPlaying ? <Volume2 size={18} className="animate-pulse" /> : <VolumeX size={18} />}
+          <div className={`p-2.5 rounded-xl transition-all ${isPlaying ? 'bg-green-500 text-white shadow-lg' : 'bg-slate-100'}`}>
+            {isPlaying ? <Volume2 size={20} className="animate-pulse" /> : <VolumeX size={20} />}
           </div>
           <div className="flex flex-col items-start leading-none">
-            <span className={`text-[10px] font-black uppercase tracking-widest ${isPlaying ? 'text-amber-400' : 'text-slate-400'}`}>
-              {isPlaying ? 'System On' : 'Muted'}
+            <span className={`text-[10px] font-black uppercase tracking-widest ${isPlaying ? 'text-white' : 'text-slate-400'}`}>
+              {isPlaying ? 'Audio Active' : 'Muted'}
             </span>
-            <span className="text-[9px] mt-1 opacity-40 font-bold uppercase tracking-tighter">Abraseed Beats</span>
+            <span className="text-[9px] mt-1 font-medium opacity-30 uppercase tracking-tighter italic">Laguabra.mpeg</span>
           </div>
         </button>
       </div>
