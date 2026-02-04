@@ -8,6 +8,7 @@ import GeneralTab from './component/GeneralTab';
 import FuzzyTab from './component/FuzzyTab';
 import PartsTab from './component/PartsTab';
 import FlowchartTab from './component/FlowchartTab';
+import { TechDesign } from '@/components/TechDesign'; // Kita pakai yang sudah kita buat tadi!
 
 export default function AboutProject() {
   const [activeTab, setActiveTab] = useState('general');
@@ -49,22 +50,20 @@ export default function AboutProject() {
           </div>
         </div>
 
-        {/* RENDER CONTENT */}
-        <div className="mt-8 max-w-3xl mx-auto">
-          {activeTab === 'general' && <GeneralTab />}
-          {activeTab === 'parts' && <PartsTab />}
-          {activeTab === 'fuzzy' && <FuzzyTab />}
-          {activeTab === 'flowchart' && <FlowchartTab />}
-          {activeTab === 'design' && <DefaultDesignTab />}
+        {/* RENDER CONTENT - Sekarang max-w disesuaikan agar TechDesign tampil lega */}
+        <div className={`mt-8 mx-auto transition-all duration-500 ${activeTab === 'design' ? 'max-w-6xl' : 'max-w-3xl'}`}>
+          {activeTab === 'general' && <div className="animate-in fade-in slide-in-from-bottom-4"><GeneralTab /></div>}
+          {activeTab === 'parts' && <div className="animate-in fade-in slide-in-from-bottom-4"><PartsTab /></div>}
+          {activeTab === 'fuzzy' && <div className="animate-in fade-in slide-in-from-bottom-4"><FuzzyTab /></div>}
+          {activeTab === 'flowchart' && <div className="animate-in fade-in slide-in-from-bottom-4"><FlowchartTab /></div>}
+          {activeTab === 'design' && (
+            <div className="animate-in fade-in slide-in-from-bottom-4">
+               {/* Memanggil TechDesign yang berisi PCB & Schematic */}
+               <TechDesign /> 
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
-
-// Hanya sisakan DesignTab sebagai placeholder jika belum ada filenya
-const DefaultDesignTab = () => (
-  <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 text-center">
-    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Konten Design sedang disiapkan...</p>
-  </div>
-);
