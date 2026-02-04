@@ -1,216 +1,125 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { 
-  Sun, Activity, RefreshCcw, 
-  Settings2, X, Waves, History, Power
-} from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Volume2, VolumeX, LayoutDashboard, Map, Info, Users, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-export default function DashboardV2() {
-  const [sensor, setSensor] = useState({
-    intensitas_cahaya: 0,
-    tinggi_air: 0,
-    kondisi_pompa: 'MATI',
-    system_status: 'STANDBY'
-  });
-  
-  const [logs, setLogs] = useState<any[]>([]);
-  const [plantConfig, setPlantConfig] = useState({ name: 'Loading...', date: '' });
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newPlantName, setNewPlantName] = useState("");
-  const [newPlantDate, setNewPlantDate] = useState("");
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [lastSeen, setLastSeen] = useState<Date | null>(null);
+export default function V2Layout({ children }: { children: React.ReactNode }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const pathname = usePathname();
 
-  const calculateAge = (dateString: string) => {
-    if (!dateString) return 0;
-    const start = new Date(dateString);
-    const now = new Date();
-    const diffTime = now.getTime() - start.getTime();
-    return Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
-  };
-
-  const fetchData = async () => {
-    setIsUpdating(true);
-    try {
-      const { data: sensorData, error: sError } = await supabase
-        .from('monitoring') 
-        .select('tinggi_air, intensitas_cahaya, kondisi_pompa, created_at')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (sError) throw sError;
-
-      if (sensorData && sensorData.length > 0) {
-        setSensor({
-          tinggi_air: sensorData[0].tinggi_air || 0,
-          intensitas_cahaya: sensorData[0].intensitas_cahaya || 0,
-          kondisi_pompa: sensorData[0].kondisi_pompa || 'MATI',
-          system_status: 'RUNNING'
-        });
-        setLogs(sensorData);
-        if (sensorData[0].created_at) setLastSeen(new Date(sensorData[0].created_at));
+  const toggleMusic = () => {
+    if (audioRef.current) {
+      if (!isPlaying) {
+        audioRef.current.play();
+        audioRef.current.muted = false;
+      } else {
+        audioRef.current.pause();
       }
-
-      const { data: configData } = await supabase
-        .from('plant_settings')
-        .select('*')
-        .eq('id', 1)
-        .single();
-
-      if (configData) setPlantConfig({ name: configData.plant_name, date: configData.planting_date });
-    } catch (err) {
-      console.error("Fetch Error:", err);
-    } finally {
-      setTimeout(() => setIsUpdating(false), 800);
+      setIsPlaying(!isPlaying);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const menuItems = [
+    { name: 'Monitoring', path: '/v2', icon: <LayoutDashboard size={20} /> },
+    { name: 'Roadmap', path: '/v2/roadmap', icon: <Map size={20} /> },
+    { name: 'About Project', path: '/v2/about', icon: <Info size={20} /> },
+    { name: 'Our Team', path: '/v2/team', icon: <Users size={20} /> },
+  ];
 
   return (
-    <div className="min-h-screen bg-transparent p-4 md:p-8 space-y-8 font-sans">
-      {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+    <div className="flex min-h-screen bg-[#F0F7F2]">
+      {/* SIDEBAR - Solid & Professional */}
+      <aside className="fixed left-0 top-0 h-screen w-72 bg-[#1b4d2c] text-white p-6 flex flex-col justify-between z-50 shadow-[10px_0_40px_rgba(0,0,0,0.15)]">
         <div>
-          <h1 className="text-4xl font-black text-slate-800 tracking-tighter notranslate lowercase italic">
-            {plantConfig.name} <span className="text-slate-200 not-italic">/ overview</span>
-          </h1>
-          <div className="flex items-center gap-2 mt-2">
-             <span className={`h-2 w-2 rounded-full animate-pulse ${sensor.kondisi_pompa === 'HIDUP' ? 'bg-blue-500' : 'bg-slate-300'}`}></span>
-             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-               System: {sensor.system_status} — Pump Status: {sensor.kondisi_pompa}
-             </p>
-          </div>
-        </div>
-
-        <div className="flex gap-3">
-          <button 
-            onClick={() => setIsModalOpen(true)} 
-            className="flex items-center gap-2 bg-white border border-slate-200 px-5 py-3 rounded-2xl text-slate-600 font-bold text-xs hover:shadow-md transition-all active:scale-95"
-          >
-            <Settings2 size={16} /> Config
-          </button>
-          <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-slate-100 font-bold text-[10px] text-slate-400 shadow-sm">
-            <RefreshCcw size={16} className={`text-green-600 ${isUpdating ? 'animate-spin' : ''}`} />
-            {isUpdating ? 'SYNCING...' : `LAST SYNC: ${lastSeen ? lastSeen.toLocaleTimeString() : '--'}`}
-          </div>
-        </div>
-      </div>
-
-      {/* SENSOR GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Water Level */}
-        <div className="bg-white p-8 rounded-[2.5rem] border-l-8 border-blue-500 shadow-sm hover:scale-[1.02] transition-transform">
-          <Waves className="text-blue-500 mb-4" size={32} />
-          <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Ketinggian Air</p>
-          <h3 className="text-4xl font-black text-slate-800 tracking-tighter">{sensor.tinggi_air} <span className="text-lg font-medium text-slate-300">cm</span></h3>
-        </div>
-
-        {/* Light Intensity */}
-        <div className="bg-white p-8 rounded-[2.5rem] border-l-8 border-yellow-400 shadow-sm hover:scale-[1.02] transition-transform">
-          <Sun className="text-yellow-500 mb-4" size={32} />
-          <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Intensitas Cahaya</p>
-          <h3 className="text-4xl font-black text-slate-800 tracking-tighter">{sensor.intensitas_cahaya} <span className="text-lg font-medium text-slate-300">Lux</span></h3>
-        </div>
-
-        {/* Pump Control Status */}
-        <div className={`p-8 rounded-[2.5rem] border-l-8 shadow-sm transition-all hover:scale-[1.02] ${sensor.kondisi_pompa === 'HIDUP' ? 'bg-blue-600 border-blue-400' : 'bg-white border-slate-200'}`}>
-          <Power className={`${sensor.kondisi_pompa === 'HIDUP' ? 'text-white animate-pulse' : 'text-slate-300'} mb-4`} size={32} />
-          <p className={`${sensor.kondisi_pompa === 'HIDUP' ? 'text-blue-200' : 'text-slate-400'} text-[10px] font-black uppercase tracking-widest`}>Kondisi Pompa</p>
-          <h3 className={`text-4xl font-black tracking-tighter ${sensor.kondisi_pompa === 'HIDUP' ? 'text-white' : 'text-slate-800'}`}>{sensor.kondisi_pompa}</h3>
-        </div>
-
-        {/* Plant Age */}
-        <div className="bg-white p-8 rounded-[2.5rem] border-l-8 border-green-500 shadow-sm hover:scale-[1.02] transition-transform">
-          <Activity className="text-green-500 mb-4" size={32} />
-          <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Umur Tanam</p>
-          <h3 className="text-4xl font-black text-slate-800 tracking-tighter">{calculateAge(plantConfig.date)} <span className="text-lg font-medium text-slate-300">Hari</span></h3>
-        </div>
-      </div>
-
-      {/* ACTIVITY LOGS */}
-      <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-        <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
-          <div className="flex items-center gap-3">
-            <History size={20} className="text-slate-400" />
-            <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em]">Recent History Logs</span>
-          </div>
-          <div className="h-2 w-2 rounded-full bg-green-500 animate-ping"></div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-bold">
-            <thead>
-              <tr className="text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">
-                <th className="p-6">Timestamp</th>
-                <th className="p-6">Light</th>
-                <th className="p-6">Water</th>
-                <th className="p-6">Pump</th>
-              </tr>
-            </thead>
-            <tbody className="text-slate-600">
-              {logs.map((log, i) => (
-                <tr key={i} className="border-b border-slate-50/50 hover:bg-slate-50/50 transition-colors">
-                  <td className="p-6 text-slate-400 font-mono">{new Date(log.created_at).toLocaleTimeString()}</td>
-                  <td className="p-6">{log.intensitas_cahaya} lx</td>
-                  <td className="p-6">{log.tinggi_air} cm</td>
-                  <td className="p-6">
-                    <span className={`px-3 py-1 rounded-lg text-[9px] font-black ${log.kondisi_pompa === 'HIDUP' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'}`}>
-                      {log.kondisi_pompa}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* MODAL CONFIG */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-[3rem] p-12 max-w-md w-full shadow-2xl relative animate-in fade-in zoom-in duration-300">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-slate-400 hover:text-slate-900"><X size={24} /></button>
-            <h2 className="text-3xl font-black text-slate-800 mb-8 italic lowercase tracking-tighter">Device Settings</h2>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Plant Name</label>
-                <input 
-                  type="text" 
-                  placeholder={plantConfig.name} 
-                  className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100 font-bold focus:ring-2 ring-emerald-100 transition-all outline-none" 
-                  onChange={(e) => setNewPlantName(e.target.value)} 
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-2">Planting Date</label>
-                <input 
-                  type="date" 
-                  className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100 font-bold focus:ring-2 ring-emerald-100 transition-all outline-none" 
-                  onChange={(e) => setNewPlantDate(e.target.value)} 
-                />
-              </div>
-              <button 
-                onClick={async () => {
-                  const { error } = await supabase.from('plant_settings').update({ 
-                    plant_name: newPlantName || plantConfig.name, 
-                    planting_date: newPlantDate || plantConfig.date 
-                  }).eq('id', 1);
-                  if (!error) { setIsModalOpen(false); fetchData(); }
-                }} 
-                className="w-full py-5 bg-[#1b4d2c] text-white rounded-3xl font-black uppercase tracking-widest shadow-xl shadow-green-900/20 hover:scale-[1.02] transition-all"
-              >
-                Save Configuration
-              </button>
+          {/* LOGO AREA - White Box */}
+          <div className="mb-10 group">
+            <div className="relative bg-white p-4 rounded-[2.5rem] flex items-center justify-center overflow-hidden h-44 shadow-2xl border-4 border-white/10">
+              <img 
+                src="/logo-abraseed.png.png" 
+                alt="Abraseed Logo" 
+                className="w-full h-full object-contain scale-[2.5] transition-transform duration-700 ease-in-out group-hover:scale-[2.6]"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (target.src.includes(".png.png")) target.src = "/logo-abraseed.png";
+                }}
+              />
+            </div>
+            
+            <div className="mt-6 px-2 text-center">
+              <p className="text-[10px] font-medium text-green-200/40 italic tracking-tight">
+                Project suka-suka,
+              </p>
+              <p className="text-[13px] font-black uppercase tracking-[0.1em] text-white mt-1 drop-shadow-md">
+                Output Luar Biasa
+              </p>
+              <div className="h-[2px] w-10 bg-white/20 mx-auto mt-4 rounded-full"></div>
             </div>
           </div>
+
+          {/* Navigation - With Outlines per Option */}
+          <nav className="space-y-3 mt-4">
+            {menuItems.map((item) => {
+              const isActive = pathname === item.path;
+              return (
+                <Link 
+                  key={item.path} 
+                  href={item.path}
+                  className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 border ${
+                    isActive 
+                    ? 'bg-white text-[#1b4d2c] border-white shadow-xl translate-x-2' 
+                    : 'bg-transparent text-green-100/40 border-white/10 hover:border-white/30 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <div className={`${isActive ? 'text-[#1b4d2c]' : 'text-green-400/50 group-hover:text-green-300'} transition-colors`}>
+                    {item.icon}
+                  </div>
+                  <span className="text-[13px] tracking-wide uppercase">{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
         </div>
-      )}
+
+        {/* Bottom Switcher */}
+        <Link href="/" className="flex items-center justify-center gap-3 py-4 border border-white/10 rounded-2xl text-green-100/30 hover:text-white hover:bg-white/10 transition-all text-[9px] font-black uppercase tracking-[0.2em]">
+          <ArrowLeft size={14} />
+          Back to v1.0
+        </Link>
+      </aside>
+
+      {/* CONTENT AREA */}
+      <main className="flex-1 ml-72 p-12 min-h-screen">
+        {children}
+      </main>
+
+      {/* MUSIC PLAYER */}
+      <audio ref={audioRef} loop>
+        <source src="/laguabra.mpeg" type="audio/mpeg" />
+      </audio>
+
+      <div className="fixed bottom-8 right-8 z-[100]">
+        <button 
+          onClick={toggleMusic}
+          className={`flex items-center gap-4 p-3 pr-7 rounded-2xl transition-all duration-500 shadow-2xl border-2 ${
+            isPlaying 
+            ? 'bg-[#1b4d2c] border-white/20 text-white' 
+            : 'bg-white border-slate-200 text-slate-500'
+          }`}
+        >
+          <div className={`p-2.5 rounded-xl transition-all ${isPlaying ? 'bg-green-500 text-white shadow-lg' : 'bg-slate-100'}`}>
+            {isPlaying ? <Volume2 size={20} className="animate-pulse" /> : <VolumeX size={20} />}
+          </div>
+          <div className="flex flex-col items-start leading-none">
+            <span className={`text-[10px] font-black uppercase tracking-widest ${isPlaying ? 'text-white' : 'text-slate-400'}`}>
+              {isPlaying ? 'Audio Active' : 'Muted'}
+            </span>
+            <span className="text-[9px] mt-1 font-medium opacity-30 uppercase tracking-tighter italic">Laguabra.mpeg</span>
+          </div>
+        </button>
+      </div>
     </div>
   );
 }
