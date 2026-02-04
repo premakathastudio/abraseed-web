@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Volume2, VolumeX, LayoutDashboard, Map, Info, Users, ArrowLeft, Leaf } from 'lucide-react';
+import { Volume2, VolumeX, LayoutDashboard, Map, Info, Users, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -31,54 +31,50 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-[#F0F7F2]">
-      {/* SIDEBAR */}
+      {/* SIDEBAR - Menggunakan folder v2 sesuai preferensi */}
       <aside className="fixed left-0 top-0 h-screen w-72 bg-[#1b4d2c] text-white p-6 flex flex-col justify-between z-50 shadow-[10px_0_40px_rgba(0,0,0,0.15)] overflow-hidden">
         
-        {/* AKSEN BACKGROUND SIDEBAR (Biar Gak Flat) */}
+        {/* AKSEN BACKGROUND SIDEBAR */}
         <div className="absolute top-[-10%] left-[-10%] w-64 h-64 bg-emerald-400/10 blur-[80px] rounded-full pointer-events-none"></div>
 
         <div className="relative z-10">
-          {/* LOGO AREA - RE-DESIGNED */}
+          {/* LOGO AREA - MODERN GLASS FRAMING */}
           <div className="mb-12 group">
-            <div className="relative h-48 w-full flex flex-col items-center justify-center rounded-[3rem] border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden transition-all duration-500 group-hover:border-white/20">
+            <div className="relative h-48 w-full flex flex-col items-center justify-center rounded-[3rem] border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden transition-all duration-500 group-hover:border-white/20 shadow-2xl">
               
-              {/* Soft Radial Glow di belakang logo */}
+              {/* Radial Glow Effect */}
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent opacity-50"></div>
 
-              {/* Logo Wrapper */}
-              <div className="relative w-40 h-20 transition-transform duration-700 ease-out group-hover:scale-110">
+              {/* Logo Wrapper - Fixed Path */}
+              <div className="relative w-44 h-24 transition-transform duration-700 ease-out group-hover:scale-110 flex items-center justify-center p-4">
                 <img 
                   src="/logo-abraseed.png" 
                   alt="Abraseed Logo" 
-                  className="w-full h-full object-contain brightness-0 invert opacity-90 group-hover:opacity-100 transition-all"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.classList.remove('brightness-0', 'invert'); // Kalau logonya sudah berwarna, hapus filter ini
-                  }}
+                  className="max-w-full max-h-full object-contain"
                 />
               </div>
 
               {/* Version Badge */}
-              <div className="absolute top-4 right-6">
-                <span className="text-[8px] font-black px-2 py-0.5 rounded-full bg-emerald-500 text-white tracking-widest uppercase">V2.0</span>
+              <div className="absolute top-6 right-8">
+                <span className="text-[7px] font-black px-2.5 py-1 rounded-full bg-emerald-500 text-white tracking-[0.2em] uppercase shadow-lg shadow-emerald-900/20">
+                  V2.0
+                </span>
               </div>
             </div>
             
             <div className="mt-6 px-2 text-center">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <div className="h-[1px] w-4 bg-green-200/20"></div>
-                <p className="text-[10px] font-bold text-green-200/40 uppercase tracking-[0.2em] italic">
-                  Ecosystem
-                </p>
-                <div className="h-[1px] w-4 bg-green-200/20"></div>
+              <div className="flex items-center justify-center gap-2 mb-1 opacity-30">
+                <div className="h-[1px] w-4 bg-white"></div>
+                <p className="text-[8px] font-bold text-white uppercase tracking-[0.3em] italic">Ecosystem</p>
+                <div className="h-[1px] w-4 bg-white"></div>
               </div>
-              <p className="text-[14px] font-black uppercase tracking-[0.15em] text-white drop-shadow-lg">
-                Output <span className="text-emerald-400">Luar Biasa</span>
+              <p className="text-[14px] font-black uppercase tracking-[0.15em] text-white">
+                Output <span className="text-emerald-400 italic font-black">Luar Biasa</span>
               </p>
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* Navigation Items */}
           <nav className="space-y-2.5 mt-4">
             {menuItems.map((item) => {
               const isActive = pathname === item.path;
@@ -119,7 +115,7 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
         <source src="/laguabra.mpeg" type="audio/mpeg" />
       </audio>
 
-      {/* FLOATING CONTROLS */}
+      {/* MUSIC CONTROLS */}
       <div className="fixed bottom-8 right-8 z-[100]">
         <button 
           onClick={toggleMusic}
@@ -129,14 +125,14 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
             : 'bg-white border-slate-200 text-slate-500 shadow-slate-200/50'
           }`}
         >
-          <div className={`p-2.5 rounded-xl transition-all ${isPlaying ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-100'}`}>
+          <div className={`p-2.5 rounded-xl transition-all ${isPlaying ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-100'}`}>
             {isPlaying ? <Volume2 size={20} className="animate-pulse" /> : <VolumeX size={20} />}
           </div>
           <div className="flex flex-col items-start leading-none">
             <span className={`text-[9px] font-black uppercase tracking-widest ${isPlaying ? 'text-white' : 'text-slate-400'}`}>
               {isPlaying ? 'System Audio' : 'Muted'}
             </span>
-            <span className="text-[8px] mt-1 font-medium opacity-40 uppercase tracking-tighter">Current: Laguabra</span>
+            <span className="text-[8px] mt-1 font-medium opacity-40 uppercase tracking-tighter italic">Laguabra.mpeg</span>
           </div>
         </button>
       </div>
