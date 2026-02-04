@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import { LayoutGrid, Box, BrainCircuit, GitBranch, PencilRuler } from 'lucide-react';
 
-// IMPORT KOMPONEN LUAR (Pastikan file-file ini sudah ada di folder component)
+// IMPORT SEMUA TAB
 import GeneralTab from './component/GeneralTab'; 
-// Catatan: Jika tab lain belum kamu pisah filenya, mereka akan tetap menggunakan kodingan internal di bawah ini.
+import FuzzyTab from './component/FuzzyTab';
+import PartsTab from './component/PartsTab';
+import FlowchartTab from './component/FlowchartTab';
 
 export default function AboutProject() {
   const [activeTab, setActiveTab] = useState('general');
@@ -21,7 +23,6 @@ export default function AboutProject() {
   return (
     <div className="min-h-screen bg-transparent py-10 px-4">
       <div className="max-w-6xl mx-auto">
-        
         {/* HEADER */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-black text-slate-800 mb-4 tracking-tight uppercase">
@@ -50,13 +51,10 @@ export default function AboutProject() {
 
         {/* RENDER CONTENT */}
         <div className="mt-8 max-w-3xl mx-auto">
-          {/* Bagian ini sekarang memanggil file GeneralTab yang baru kamu edit */}
           {activeTab === 'general' && <GeneralTab />}
-          
-          {/* Tab lain masih menggunakan placeholder/internal sampai kamu memisahkan filenya */}
-          {activeTab === 'parts' && <DefaultPartsTab />}
-          {activeTab === 'fuzzy' && <DefaultFuzzyTab />}
-          {activeTab === 'flowchart' && <DefaultFlowchartTab />}
+          {activeTab === 'parts' && <PartsTab />}
+          {activeTab === 'fuzzy' && <FuzzyTab />}
+          {activeTab === 'flowchart' && <FlowchartTab />}
           {activeTab === 'design' && <DefaultDesignTab />}
         </div>
       </div>
@@ -64,27 +62,7 @@ export default function AboutProject() {
   );
 }
 
-// --- PLACEHOLDER COMPONENTS (Agar tidak error sebelum file lain dipisah) ---
-// Kamu bisa memindahkan ini ke file terpisah nantinya seperti GeneralTab
-
-const DefaultPartsTab = () => (
-  <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 text-center">
-    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Konten Components sedang disiapkan...</p>
-  </div>
-);
-
-const DefaultFuzzyTab = () => (
-  <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 text-center">
-    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Konten Fuzzy Logic sedang disiapkan...</p>
-  </div>
-);
-
-const DefaultFlowchartTab = () => (
-  <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 text-center">
-    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Konten Flowchart sedang disiapkan...</p>
-  </div>
-);
-
+// Hanya sisakan DesignTab sebagai placeholder jika belum ada filenya
 const DefaultDesignTab = () => (
   <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 text-center">
     <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Konten Design sedang disiapkan...</p>
