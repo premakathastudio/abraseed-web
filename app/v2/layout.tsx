@@ -31,45 +31,45 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-[#F0F7F2]">
-      {/* SIDEBAR - Menggunakan folder v2 sesuai preferensi */}
+      {/* SIDEBAR - Tetap di folder v2 sesuai instruksi [2026-02-04] */}
       <aside className="fixed left-0 top-0 h-screen w-72 bg-[#1b4d2c] text-white p-6 flex flex-col justify-between z-50 shadow-[10px_0_40px_rgba(0,0,0,0.15)] overflow-hidden">
         
         {/* AKSEN BACKGROUND SIDEBAR */}
         <div className="absolute top-[-10%] left-[-10%] w-64 h-64 bg-emerald-400/10 blur-[80px] rounded-full pointer-events-none"></div>
 
         <div className="relative z-10">
-          {/* LOGO AREA - MODERN GLASS FRAMING */}
+          {/* LOGO AREA - SOLID WHITE & SCALE 2X */}
           <div className="mb-12 group">
-            <div className="relative h-48 w-full flex flex-col items-center justify-center rounded-[3rem] border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden transition-all duration-500 group-hover:border-white/20 shadow-2xl">
+            <div className="relative h-48 w-full flex flex-col items-center justify-center rounded-[3rem] bg-white shadow-[0_25px_60px_rgba(0,0,0,0.3)] overflow-hidden transition-all duration-500 border-4 border-white/40">
               
-              {/* Radial Glow Effect */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent opacity-50"></div>
+              {/* Inner Glow agar background putihnya lebih luxury */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,1)_0%,_rgba(240,240,240,1)_100%)]"></div>
 
-              {/* Logo Wrapper - Fixed Path */}
-              <div className="relative w-44 h-24 transition-transform duration-700 ease-out group-hover:scale-110 flex items-center justify-center p-4">
+              {/* Logo Wrapper - SCALE 2X MODE ON */}
+              <div className="relative w-full h-full transition-transform duration-700 ease-out group-hover:scale-[2.1] scale-[2.0] flex items-center justify-center">
                 <img 
                   src="/logo-abraseed.png" 
                   alt="Abraseed Logo" 
-                  className="max-w-full max-h-full object-contain"
+                  className="w-full h-full object-contain p-2"
                 />
               </div>
 
-              {/* Version Badge */}
-              <div className="absolute top-6 right-8">
-                <span className="text-[7px] font-black px-2.5 py-1 rounded-full bg-emerald-500 text-white tracking-[0.2em] uppercase shadow-lg shadow-emerald-900/20">
+              {/* Version Badge - Floating on Top */}
+              <div className="absolute top-6 right-8 z-20">
+                <span className="text-[7px] font-black px-2.5 py-1 rounded-full bg-[#1b4d2c] text-white tracking-[0.2em] uppercase shadow-lg border border-white/10">
                   V2.0
                 </span>
               </div>
             </div>
             
             <div className="mt-6 px-2 text-center">
-              <div className="flex items-center justify-center gap-2 mb-1 opacity-30">
+              <div className="flex items-center justify-center gap-2 mb-1 opacity-40">
                 <div className="h-[1px] w-4 bg-white"></div>
                 <p className="text-[8px] font-bold text-white uppercase tracking-[0.3em] italic">Ecosystem</p>
                 <div className="h-[1px] w-4 bg-white"></div>
               </div>
               <p className="text-[14px] font-black uppercase tracking-[0.15em] text-white">
-                Output <span className="text-emerald-400 italic font-black">Luar Biasa</span>
+                Output <span className="text-emerald-400 italic font-black text-shadow-sm">Luar Biasa</span>
               </p>
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
             : 'bg-white border-slate-200 text-slate-500 shadow-slate-200/50'
           }`}
         >
-          <div className={`p-2.5 rounded-xl transition-all ${isPlaying ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-100'}`}>
+          <div className={`p-2.5 rounded-xl transition-all ${isPlaying ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-100'}`}>
             {isPlaying ? <Volume2 size={20} className="animate-pulse" /> : <VolumeX size={20} />}
           </div>
           <div className="flex flex-col items-start leading-none">
