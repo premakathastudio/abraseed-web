@@ -22,6 +22,7 @@ export default function DashboardV2() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [lastSeen, setLastSeen] = useState<Date | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [diffSeconds, setDiffSeconds] = useState(0);
 
   const calculateAge = (dateString: string) => {
     if (!dateString) return 0;
@@ -38,7 +39,7 @@ export default function DashboardV2() {
         .from('monitoring') 
         .select('tinggi_air, intensitas_cahaya, kondisi_pompa, created_at')
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(10);
 
       if (sError) throw sError;
 
@@ -47,9 +48,10 @@ export default function DashboardV2() {
         const dataTime = new Date(latestData.created_at).getTime();
         const now = new Date().getTime();
         
-        // Heartbeat: 60 detik telat = Offline
-        const diffSeconds = (now - dataTime) / 1000;
-        setIsConnected(diffSeconds < 60); 
+        // Logika Heartbeat: 300 detik (5 Menit)
+        const diff = (now - dataTime) / 1000;
+        setDiffSeconds(diff);
+        setIsConnected(diff < 300); 
 
         setSensor({
           tinggi_air: latestData.tinggi_air || 0,
@@ -76,6 +78,15 @@ export default function DashboardV2() {
     return () => clearInterval(interval);
   }, []);
 
+  // Helper untuk status warna
+  const getStatusColor = () => {
+    if (!isConnected) return 'rose';
+    if (diffSeconds > 180) return 'amber'; // Stale (3-5 menit)
+    return 'emerald'; // Fresh (< 3 menit)
+  };
+
+  const statusColor = getStatusColor();
+
   return (
     <div className="w-full space-y-12">
       {/* HEADER SECTION */}
@@ -86,15 +97,21 @@ export default function DashboardV2() {
           </h1>
           <div className="flex items-center gap-3 mt-2">
              <div className="relative flex h-3 w-3">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isConnected ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
-                <span className={`relative inline-flex rounded-full h-3 w-3 ${isConnected ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusColor === 'emerald' ? 'bg-emerald-400' : statusColor === 'amber' ? 'bg-amber-400' : 'bg-rose-400'}`}></span>
+                <span className={`relative inline-flex rounded-full h-3 w-3 ${statusColor === 'emerald' ? 'bg-emerald-500' : statusColor === 'amber' ? 'bg-amber-500' : 'bg-rose-500'}`}></span>
              </div>
              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 flex items-center gap-2">
-               System: 
-               <span className={isConnected ? 'text-emerald-600' : 'text-rose-600'}>
-                 {isConnected ? 'LIVE CONNECTED' : 'DISCONNECTED'}
-               </span>
-               {isConnected ? <Wifi size={12} className="text-emerald-500" /> : <WifiOff size={12} className="text-rose-500" />}
+                System: 
+                <span className={`
+                  ${statusColor === 'emerald' ? 'text-emerald-600' : statusColor === 'amber' ? 'text-amber-600' : 'text-rose-600'}
+                `}>
+                  {statusColor === 'emerald' ? 'LIVE CONNECTED' : statusColor === 'amber' ? 'STALE CONNECTION' : 'DISCONNECTED'}
+                </span>
+                {isConnected ? (
+                  <Wifi size={12} className={statusColor === 'amber' ? 'text-amber-500' : 'text-emerald-500'} />
+                ) : (
+                  <WifiOff size={12} className="text-rose-500" />
+                )}
              </p>
           </div>
         </div>
@@ -108,22 +125,13 @@ export default function DashboardV2() {
             </div>
           </div>
 
-          <div className="relative group/btn">
-            <button onClick={() => setIsModalOpen(true)} className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:bg-slate-50 transition-all">
-              <Settings2 size={24} className="text-slate-500" />
-            </button>
-            <div className="absolute bottom-full mb-3 right-0 w-48 bg-slate-800 text-white text-[10px] p-3 rounded-xl opacity-0 pointer-events-none group-hover/btn:opacity-100 transition-opacity shadow-xl z-20">
-              <div className="flex gap-2 items-start text-left">
-                <Info size={14} className="text-emerald-400 shrink-0" />
-                <span>Klik untuk ganti nama tanaman atau reset tanggal tanam.</span>
-              </div>
-              <div className="absolute top-full right-6 border-8 border-transparent border-t-slate-800"></div>
-            </div>
-          </div>
+          <button onClick={() => setIsModalOpen(true)} className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:bg-slate-50 transition-all">
+            <Settings2 size={24} className="text-slate-500" />
+          </button>
         </div>
       </div>
 
-      {/* 3 KARTU UTAMA - DESIGN LENGKAP DENGAN OVERLAY */}
+      {/* 3 KARTU UTAMA */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
         {[
           { title: "Water Level", value: sensor.tinggi_air, unit: "cm", bg: "bg-blue-600", shadow: "shadow-blue-600/40", icon: <Waves size={120} /> },
@@ -135,15 +143,13 @@ export default function DashboardV2() {
             <p className="opacity-60 text-[10px] font-black uppercase tracking-widest mb-1">{card.title}</p>
             <h3 className="text-6xl font-black tracking-tighter">{card.value}<span className="text-xl ml-2 opacity-40 italic font-light">{card.unit}</span></h3>
             
-            {/* OVERLAY OFFLINE TIPIS */}
             {!isConnected && (
-              <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center transition-all duration-500">
+              <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-2">
                   <div className="flex items-center gap-2 bg-rose-600 text-white px-4 py-1.5 rounded-full animate-pulse shadow-xl">
                     <WifiOff size={14} />
                     <span className="text-[10px] font-black uppercase tracking-widest">Offline</span>
                   </div>
-                  <p className="text-[9px] font-bold text-white/60 tracking-tighter italic">Showing last seen data</p>
                 </div>
               </div>
             )}
@@ -153,7 +159,7 @@ export default function DashboardV2() {
 
       {/* BOTTOM SECTION: PUMP & LOGS */}
       <div className="flex flex-col xl:flex-row gap-8 items-start">
-        {/* KARTU POMPA DINAMIS (Merah/Ijo Muda) */}
+        {/* KARTU POMPA */}
         <div className={`w-full xl:w-72 p-8 rounded-[2.5rem] border-2 transition-all duration-500 shadow-2xl ${
           sensor.kondisi_pompa === 'HIDUP' && isConnected 
           ? 'bg-emerald-50 border-emerald-200 shadow-emerald-200/20' 
@@ -170,21 +176,21 @@ export default function DashboardV2() {
           <h4 className={`text-4xl font-black tracking-tighter ${sensor.kondisi_pompa === 'HIDUP' && isConnected ? 'text-emerald-700' : 'text-rose-700'}`}>
             {isConnected ? sensor.kondisi_pompa : 'OFFLINE'}
           </h4>
-          <p className="text-[10px] mt-3 font-bold opacity-60 italic leading-tight">
-            {!isConnected ? 'Waiting for ESP32...' : sensor.kondisi_pompa === 'HIDUP' ? 'System is watering now...' : 'Pump is on standby.'}
+          <p className="text-[10px] mt-3 font-bold opacity-60 italic">
+            {!isConnected ? 'Connection Lost (5m+)' : sensor.kondisi_pompa === 'HIDUP' ? 'Watering active...' : 'System Standby.'}
           </p>
         </div>
 
-        {/* LOGS TABLE - DENGAN WARNA BARIS */}
+        {/* LOGS TABLE */}
         <div className="flex-1 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-8 py-5 border-b border-slate-50 flex justify-between bg-slate-50/30 items-center">
              <div className="flex items-center gap-3">
                 <History size={16} className="text-slate-400" />
                 <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Activity History</span>
              </div>
-             {!isConnected && <span className="text-[9px] font-black text-rose-500 animate-pulse uppercase tracking-tighter">Connection Lost</span>}
+             {!isConnected && <span className="text-[9px] font-black text-rose-500 animate-pulse uppercase tracking-tighter italic">Warning: 5 Minutes No Data</span>}
           </div>
-          <table className="w-full text-left">
+          <table className="w-full text-left text-[11px]">
             <thead className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] border-b border-slate-50">
               <tr>
                 <th className="px-8 py-4">Time</th>
@@ -192,9 +198,9 @@ export default function DashboardV2() {
                 <th className="px-8 py-4 text-right">Data In</th>
               </tr>
             </thead>
-            <tbody className="text-[11px] font-bold text-slate-500">
+            <tbody className="font-bold text-slate-500">
               {logs.map((log, i) => (
-                <tr key={i} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
                   <td className="px-8 py-3 text-slate-400 font-mono italic">{new Date(log.created_at).toLocaleTimeString()}</td>
                   <td className="px-8 py-3">
                     <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase ${
@@ -215,23 +221,17 @@ export default function DashboardV2() {
 
       {/* MODAL CONFIG */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[999] flex items-center justify-center p-4 text-slate-800">
-          <div className="bg-white rounded-[3rem] p-12 max-w-md w-full shadow-2xl relative border border-white/20">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-slate-400 hover:text-black transition-colors"><X size={24} /></button>
-            <h2 className="text-3xl font-black mb-8 italic tracking-tighter">Configuration</h2>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[3rem] p-12 max-w-md w-full shadow-2xl relative">
+            <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-slate-400"><X size={24} /></button>
+            <h2 className="text-3xl font-black mb-8 italic">Configuration</h2>
             <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-2 italic">Plant Name</label>
-                <input type="text" placeholder={plantConfig.name} className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100 font-bold outline-none focus:ring-2 ring-emerald-500/20 transition-all" onChange={(e) => setNewPlantName(e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-2 italic">Planting Date</label>
-                <input type="date" className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100 font-bold outline-none focus:ring-2 ring-emerald-500/20 transition-all" onChange={(e) => setNewPlantDate(e.target.value)} />
-              </div>
+              <input type="text" placeholder="Plant Name" className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100" onChange={(e) => setNewPlantName(e.target.value)} />
+              <input type="date" className="w-full p-5 bg-slate-50 rounded-2xl border border-slate-100" onChange={(e) => setNewPlantDate(e.target.value)} />
               <button onClick={async () => {
                 const { error } = await supabase.from('plant_settings').update({ plant_name: newPlantName || plantConfig.name, planting_date: newPlantDate || plantConfig.date }).eq('id', 1);
                 if (!error) { setIsModalOpen(false); fetchData(); }
-              }} className="w-full py-5 bg-[#1b4d2c] text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-[#1b4d2c]/30 hover:scale-[1.02] active:scale-95 transition-all">Save Changes</button>
+              }} className="w-full py-5 bg-[#1b4d2c] text-white rounded-2xl font-black uppercase shadow-xl">Save Changes</button>
             </div>
           </div>
         </div>
